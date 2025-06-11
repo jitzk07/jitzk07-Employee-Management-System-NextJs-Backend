@@ -44,3 +44,9 @@ This is a role-based admin dashboard built with **Next.js** (frontend) and **Nod
 git clone https://github.com/jitzk07/jitzk07-Employee-Management-System-NextJs-Backend
 cd backend/npm run dev
 cd frontend/npm run dev
+
+
+admin email - admin@example.com
+admin password - admin123
+
+default password for users - 123456 (once they created)
