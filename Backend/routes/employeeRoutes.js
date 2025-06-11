@@ -3,7 +3,6 @@ const router = express.Router();
 const employeeController = require('../controllers/employeeController');
 const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
-// Employee routes
 router.post(
   '/create',
   protect,

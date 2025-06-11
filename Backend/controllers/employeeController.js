@@ -2,29 +2,24 @@ const Employee = require("../models/Employee");
 const Department = require("../models/Department");
 const User = require("../models/User");
 
-// Create a new employee
 exports.createEmployee = async (req, res) => {
   try {
     const { name, email, phone, department, designation } = req.body;
 
-    // Validate required fields
     if (!name || !email || !department) {
       return res.status(400).json({ error: "Name, Email, and Department are required." });
     }
 
-    // Check if department exists
     const deptExists = await Department.findById(department);
     if (!deptExists) {
       return res.status(400).json({ error: "❌ Department does not exist" });
     }
 
-    // Check if email already exists in User
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ error: "❌ Email is already registered" });
     }
 
-    // Create user with default password
     const defaultPassword = "123456";
     const user = new User({
       fullName: name,
@@ -34,7 +29,6 @@ exports.createEmployee = async (req, res) => {
     });
     await user.save();
 
-    // Create employee and link to user
     const employee = new Employee({
       name,
       email,
@@ -54,7 +48,6 @@ exports.createEmployee = async (req, res) => {
   }
 };
 
-// Get all employees (non-deleted)
 exports.getAllEmployees = async (req, res) => {
   try {
     const { search, department, page = 1, limit = 10 } = req.query;
@@ -94,7 +87,6 @@ exports.getAllEmployees = async (req, res) => {
   }
 };
 
-// Get employee by ID
 exports.getEmployeeById = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id).populate(
@@ -112,12 +104,10 @@ exports.getEmployeeById = async (req, res) => {
   }
 };
 
-// Update employee
 exports.updateEmployee = async (req, res) => {
   try {
     const { department } = req.body;
 
-    // Check if department exists if it's being updated
     if (department) {
       const deptExists = await Department.findById(department);
       if (!deptExists) {
@@ -143,12 +133,11 @@ exports.updateEmployee = async (req, res) => {
   }
 };
 
-// Soft delete employee
 exports.deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByIdAndUpdate(
       req.params.id,
-      { isDeleted: true }, // ✅ Soft delete
+      { isDeleted: true }, 
       { new: true }
     );
 
@@ -162,7 +151,6 @@ exports.deleteEmployee = async (req, res) => {
   }
 };
 
-// Get employees by department
 exports.getEmployeesByDepartment = async (req, res) => {
   try {
     const employees = await Employee.find({

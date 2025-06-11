@@ -3,7 +3,6 @@ const router = express.Router();
 const departmentController = require("../controllers/departmentController");
 const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
-// Department routes
 router.post(
   "/create",
   protect,

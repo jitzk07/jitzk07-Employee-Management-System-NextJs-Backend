@@ -1,6 +1,5 @@
 const Department = require('../models/Department');
 
-// Create a new department
 exports.createDepartment = async (req, res) => {
   try {
     const { name } = req.body;
@@ -21,7 +20,6 @@ exports.createDepartment = async (req, res) => {
   }
 };
 
-// Get all departments
 exports.getAllDepartments = async (req, res) => {
   try {
     const departments = await Department.find();
@@ -31,7 +29,6 @@ exports.getAllDepartments = async (req, res) => {
   }
 };
 
-// Get department by ID
 exports.getDepartmentById = async (req, res) => {
   try {
     const department = await Department.findById(req.params.id);
@@ -44,7 +41,6 @@ exports.getDepartmentById = async (req, res) => {
   }
 };
 
-// Update department
 exports.updateDepartment = async (req, res) => {
   try {
     const { name } = req.body;
@@ -68,7 +64,6 @@ exports.updateDepartment = async (req, res) => {
   }
 };
 
-// Delete department
 exports.deleteDepartment = async (req, res) => {
   try {
     const department = await Department.findByIdAndDelete(req.params.id);

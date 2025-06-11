@@ -1,38 +1,45 @@
+const { validationResult, checkSchema } = require("express-validator");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 
+const { registerValidationRules, loginValidationRules } = require("../validators/authValidator");
+
+const runValidations = validations => async (req, res) => {
+  for (let validation of validations) {
+    await validation.run(req);
+  }
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  return null;
+};
+
 exports.registerUser = async (req, res) => {
+  const error = await runValidations(registerValidationRules)(req, res);
+  if (error) return; 
+
   const { fullName, email, password, role } = req.body;
 
   try {
-    // 1️⃣ Check if user with email already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // 2️⃣ Check if any admin already exists
     const adminExists = await User.exists({ role: "admin" });
 
-    // 3️⃣ Admin registration restriction logic (place this here)
     if (role === "admin") {
       if (adminExists) {
-        // Only block if token exists but is not admin
         if (req.user && req.user.role !== "admin") {
-          return res
-            .status(403)
-            .json({ message: "Only admin can register other admins" });
+          return res.status(403).json({ message: "Only admin can register other admins" });
         }
-        // If no token at all, block too
         if (!req.user) {
-          return res
-            .status(403)
-            .json({ message: "Only admin can register other admins" });
+          return res.status(403).json({ message: "Only admin can register other admins" });
         }
       }
     }
 
-    // 4️⃣ Create new user
     const user = await User.create({ fullName, email, password, role });
 
     res.status(201).json({
@@ -47,6 +54,9 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
+  const error = await runValidations(loginValidationRules)(req, res);
+  if (error) return;
+
   const { email, password } = req.body;
 
   try {
